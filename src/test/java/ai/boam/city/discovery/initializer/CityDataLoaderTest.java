@@ -43,7 +43,7 @@ class CityDataLoaderTest {
         final var captor = ArgumentCaptor.forClass(List.class);
         verify(cityRepository, times(1)).saveAll(captor.capture());
         
-        final List<City> savedCities = captor.getValue();
+        final var savedCities = (List<City>) captor.getValue();
         assertThat(savedCities).hasSize(2);
         assertThat(savedCities.get(0).getCity()).isEqualTo("Test City 1");
         assertThat(savedCities.get(1).getCity()).isEqualTo("Test City 2");
