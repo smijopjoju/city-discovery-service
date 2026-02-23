@@ -22,10 +22,13 @@ class CityControllerIntegrationTest {
     @Test
     void shouldFindNearbyCitiesFromDatabase() {
         // given
-        String url = "http://localhost:" + port + "/cds/v1/cities/nearby?lat=40.6943&lng=-73.9249&limit=10";
+        final var lat = 40.6943;
+        final var lng = -73.9249;
+        final var limit = 10;
+        final var url = "http://localhost:" + port + "/cds/v1/cities/nearby?lat=" + lat + "&lng=" + lng + "&limit=" + limit;
 
         // when
-        NearbyCityResponse response = restClient.get()
+        final var response = restClient.get()
                 .uri(url)
                 .retrieve()
                 .body(NearbyCityResponse.class);
@@ -34,20 +37,30 @@ class CityControllerIntegrationTest {
         assertThat(response).isNotNull();
         assertThat(response.cities()).isNotEmpty();
 
-        // "New York" is the current dummy data returned by CityService
-        boolean foundNewYork = response.cities().stream()
-                .anyMatch(c -> c.name().equals("New York"));
+        // "Test City 1" is in the test-cities.csv at (40.6943, -73.9249)
+        final var foundTestCity1 = response.cities().stream()
+                .anyMatch(c -> c.name().equals("Test City 1"));
 
-        assertThat(foundNewYork).isTrue();
+        assertThat(foundTestCity1).isTrue();
+        
+        // Verify distance for the exact same point is 0.0
+        final var testCity1 = response.cities().stream()
+                .filter(c -> c.name().equals("Test City 1"))
+                .findFirst()
+                .orElseThrow();
+                
+        assertThat(testCity1.distanceKm()).isEqualTo(0.0);
     }
 
     @Test
     void shouldReturnBadRequestForInvalidCoordinates() {
         // given
-        String url = "http://localhost:" + port + "/cds/v1/cities/nearby?lat=95.0&lng=0.0";
+        final var lat = 95.0;
+        final var lng = 0.0;
+        final var url = "http://localhost:" + port + "/cds/v1/cities/nearby?lat=" + lat + "&lng=" + lng;
 
         // when
-        var response = restClient.get()
+        final var response = restClient.get()
                 .uri(url)
                 .retrieve()
                 .onStatus(status -> status.equals(HttpStatus.BAD_REQUEST), (request, res) -> {

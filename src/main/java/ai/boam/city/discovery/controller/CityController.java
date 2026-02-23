@@ -7,6 +7,8 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "City Discovery", description = "Discover nearby urban hubs for data agent tasking.")
 public class CityController {
 
+    private static final Logger log = LoggerFactory.getLogger(CityController.class);
     private final CityService cityService;
 
     public CityController(final CityService cityService) {
@@ -47,17 +50,9 @@ public class CityController {
             @Parameter(description = "Number of cities to return. Default is 10, max is 50.", example = "20")
             @RequestParam(defaultValue = "10") final Integer limit) {
 
-        // Validate coordinate ranges
-        if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
-            return ResponseEntity.badRequest().build();
-        }
-        
-        // Validate limit range
-        if (limit < 1 || limit > 50) {
-            return ResponseEntity.badRequest().build();
-        }
+        log.info("Received discovery request: lat={}, lng={}, limit={}", lat, lng, limit);
 
-        NearbyCityResponse response = cityService.findNearbyCities(lat, lng, limit);
+        final var response = cityService.findNearbyCities(lat, lng, limit);
         return ResponseEntity.ok(response);
     }
 }
