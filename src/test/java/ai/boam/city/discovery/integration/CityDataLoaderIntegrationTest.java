@@ -17,10 +17,10 @@ class CityDataLoaderIntegrationTest {
 
     @Test
     void shouldProperlyInsertDataIntoDatabaseFromTestCsv() {
-        // Assert: Data should be loaded automatically by Spring during startup with "test" profile
+        // when
         final var cities = cityRepository.findAll();
         
-        // We expect 2 cities from test-cities.csv
+        // then
         assertThat(cities).hasSize(2);
         
         final var city1 = cities.stream()
