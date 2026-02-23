@@ -15,6 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.*;
 
+
 @ExtendWith(MockitoExtension.class)
 class CityDataLoaderTest {
 
@@ -42,7 +43,7 @@ class CityDataLoaderTest {
         // then
         final var captor = ArgumentCaptor.forClass(List.class);
         verify(cityRepository, times(1)).saveAll(captor.capture());
-        
+
         final var savedCities = (List<City>) captor.getValue();
         assertThat(savedCities).hasSize(2);
         assertThat(savedCities.get(0).getCity()).isEqualTo("Test City 1");
