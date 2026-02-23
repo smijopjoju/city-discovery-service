@@ -1,3 +1,24 @@
 spring:
   application:
     name: CityDiscoveryService
+  datasource:
+    url: jdbc:h2:mem:citydb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: password
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  sql:
+    init:
+      mode: always
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+
+app:
+  city-data:
+    path: uscities.csv
